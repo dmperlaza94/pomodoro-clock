@@ -5,49 +5,23 @@ import { useEffect } from "react";
 
 momentDurationFormatSetup(moment);
 
-const TimeLeft = ({ breakLength, sessionLength }) => {
-  const [currentSessionType, setCurrentSessionType] = useState("Session");
-  const [intervalId, setIntervalId] = useState(null);
-  const [timeLeft, setTimeLeft] = useState(sessionLength);
-
-  useEffect(() => {
-    setTimeLeft(sessionLength);
-  }, [sessionLength]);
-
-  const isStarted = intervalId !== null;
-  const handleStartStopClick = () => {
-    if (isStarted) {
-      clearInterval(intervalId);
-      setIntervalId(null);
-    } else {
-      const newIntervalId = setInterval(() => {
-        setTimeLeft((prevTimeLeft) => {
-          const newTimeLeft = prevTimeLeft - 1;
-          if (newTimeLeft >= 0) {
-            return prevTimeLeft - 1;
-          }
-          if (currentSessionType === "Session") {
-            setCurrentSessionType("Break");
-            setTimeLeft(breakLength);
-          } else if (currentSessionType === "Break") {
-            setCurrentSessionType("Session");
-            setTimeLeft(sessionLength);
-          }
-        });
-      }, 100);
-      setIntervalId(newIntervalId);
-    }
-  };
+const TimeLeft = ({
+  breakLength,
+  handleStartStopClick,
+  sessionLength,
+  starStopButtonLabel,
+  timeLeft,
+  timerLabel,
+}) => {
   const formattedTimeLeft = moment
     .duration(timeLeft, "s")
     .format("mm:ss", { trim: false });
   return (
-    <div>
-      {formattedTimeLeft}
-      <p id="timer-label">{currentSessionType}</p>
+    <div class="clock">
+      <p id="timer-label">{timerLabel}</p>
       <p id="time-left">{formattedTimeLeft}</p>
-      <button onClick={handleStartStopClick}>
-        {isStarted ? "stop" : "start"}
+      <button id="start_stop" onClick={handleStartStopClick}>
+        {starStopButtonLabel}
       </button>
     </div>
   );
